@@ -1,0 +1,5 @@
+Basic diff of two hosts CPAN modules using SSH.
+
+Usage: ./CompareHostCpanModules.pl login@host1 login@host2
+
+Script ssh's into both hosts and grabs a list of installed CPAN modules and versions, then outputs the differences
