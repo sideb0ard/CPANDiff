@@ -1,4 +1,4 @@
-Basic diff of two hosts CPAN modules using SSH.
+Basic diff of CPAN modules installed on two hosts via SSH. 
 
 Usage: ./CompareHostCpanModules.pl login@host1 login@host2
 
