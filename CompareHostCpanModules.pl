@@ -10,6 +10,11 @@ unless ($ARGV[1]) {
 my $host1 = $ARGV[0];
 my $host2 = $ARGV[1];
 
+my ($hostname1) = ($host1 =~ /.*\@(.*)/);
+my ($hostname2) = ($host2 =~ /.*\@(.*)/);
+
+print "HOSTNAME1 = $hostname1 and 2 is $hostname2\n";
+
 my $clientprog = "/tmp/clientpl"; # THERES PROB A WAY TO PASS THROUGH THE WHOLE SCRIPT BUT THIS IS EASIEr FoR NOW
 my $CLIENT = << 'END';
     use ExtUtils::Installed;
@@ -26,18 +31,20 @@ print CLIENT $CLIENT;
 my $host1modulelist = ssh($host1);
 my $host2modulelist = ssh($host2);
 
-print "HOST1:::\n";
+my @modulediffs;
+my @missingmodules;
+
 foreach my $k (keys %$host1modulelist) {
-#    print "$k IS MUTHAFUCKIN ${$host1modulelist}{$k}\n";
     if (${$host2modulelist}{$k}) {
-        print "$host1 and $host2 both have $k\n";
         if (${$host1modulelist}{$k} eq ${$host2modulelist}{$k}) {
-            print "ALL GOOD - BOTH HAVE $k and version is ${$host1modulelist}{$k}\n";
+            #print "ALL GOOD - BOTH HAVE $k and version is ${$host1modulelist}{$k}\n";
         } else {
-            print "BOTH HAVE $k  - but $host1 has version ${$host1modulelist}{$k} whereas $host2 has ${$host2modulelist}{$k}\n";
+            push (@modulediffs, "$k\t$hostname1 -- ${$host1modulelist}{$k}\t$hostname2 -- ${$host2modulelist}{$k}");
+            #print "Module -- $k  -- $host1 has version ${$host1modulelist}{$k} // $host2 has ${$host2modulelist}{$k}\n";
         } 
     } else {
-        print "$host1 has $k - but $host2 doesn't\n";
+        push (@missingmodules, "$k");
+        #print "$host1 has $k version ${$host1modulelist}{$k} -- but $host2 doesn't\n";
     }
 }
 
@@ -51,4 +58,18 @@ sub ssh {
 }
 
 
-#print "RARA!!!$hostmodulelist\n";
+unless ($#modulediffs < 1) {
+    print "\n\nMODULE DIFFERENCES BETWEEN $hostname1 and $hostname2 ::\n";
+    foreach my $line (@modulediffs) {
+        print "$line\n";
+    }
+    print "\n\n";
+}
+
+unless ($#missingmodules < 1) {
+    print "MODULES ON $hostname1 but missing on $hostname2 ::\n";
+    foreach my $line (@missingmodules) {
+        print "$line\n";
+    }
+    print "\n\n";
+}
