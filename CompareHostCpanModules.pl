@@ -13,8 +13,6 @@ my $host2 = $ARGV[1];
 my ($hostname1) = ($host1 =~ /.*\@(.*)/);
 my ($hostname2) = ($host2 =~ /.*\@(.*)/);
 
-print "HOSTNAME1 = $hostname1 and 2 is $hostname2\n";
-
 my $clientprog = "/tmp/clientpl"; # THERES PROB A WAY TO PASS THROUGH THE WHOLE SCRIPT BUT THIS IS EASIEr FoR NOW
 my $CLIENT = << 'END';
     use ExtUtils::Installed;
